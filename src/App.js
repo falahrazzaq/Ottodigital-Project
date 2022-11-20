@@ -4,8 +4,17 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import "./App.css";
 
 function App() {
-  const [files, setFiles] = useState([]);
+  // Set Form Input
   const [isForm, setIsForm] = useState([]);
+  const onChangeInput = (name, value) => {
+    setIsForm({
+      ...isForm,
+      [name]: value,
+    });
+  };
+
+  // Set file input
+  const [files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/*": [],
@@ -21,29 +30,22 @@ function App() {
     },
   });
 
+  // Show preview image after upload the image
   const previewImage = files.map((file) => (
     <div key={file.name}>
       <div>
         <img
+          alt="img"
           src={file.preview}
           className="min-w-[300px] max-w-[300px] max-h-[300px] min-h-[300px]"
           onLoad={() => {
             URL.revokeObjectURL(file.preview);
           }}
-          alt="img"
         />
       </div>
     </div>
   ));
 
-  const onChangeInput = (name, value) => {
-    // console.log("change:", name, value);
-    setIsForm({
-      ...isForm,
-      [name]: value,
-    });
-  };
-  
   // Setting up the canvas
   let canvas = document.getElementById("myCanvas");
   // Get the 2D Context from the canvas
@@ -56,14 +58,14 @@ function App() {
   let textToWriteMessage = `${isForm?.messageTo}`;
   let textToWriteFrom = `${isForm?.fromName}`;
 
+  // Add Text Style to the canvas
   let textStyleOptions = {
     fontSize: 25,
-    fontFamily: "Mouse Memoirs",
     textColor: "black",
     textAlign: "left",
   };
-  // Load image on the canvas & then write text
 
+  // Load image on the canvas
   let img = new Image();
 
   // Setting up a function with the code to run after the image is loaded
@@ -71,28 +73,28 @@ function App() {
     // Once the image is loaded, we will get the width & height of the image
     let loadedImageWidth = img.width;
     let loadedImageHeight = img.height;
+
     // Set the canvas to the same size as the image.
     canvas.width = loadedImageWidth;
     canvas.height = loadedImageHeight;
+
     // Draw the image on to the canvas.
     ctx.drawImage(img, 0, 0);
+
     // Set all the properties of the text based on the input params
     ctx.font = `${textStyleOptions.fontSize}px ${textStyleOptions.fontFamily}`;
     ctx.fillStyle = textStyleOptions.textColor;
     ctx.textAlign = textStyleOptions.textAlign;
 
     // Setting this so that the postion of the text can be set
-    // based on the x and y cord from the top right corner
     ctx.textBaseline = "top";
-
-    // Loop over each of the lines and write it over the canvas
-    // for (let i = 0; i < arrayOfLinesDear.length; i++) {
-    img.src = imageUrl;
   };
 
   img.src = imageUrl;
-  //Download button function
+
+  // Download button function
   const download_image = async () => {
+    // Write text into the canvas
     ctx.fillText(textToWriteDear, 300, 200);
     ctx.fillText(textToWriteMessage, 200, 250);
     ctx.fillText(textToWriteFrom, 280, 360);
@@ -102,14 +104,12 @@ function App() {
     imageLink.download = "card.png";
     imageLink.href = canvasDownload.toDataURL("image/png", 1);
 
-    // window.open(imageLink);
-    // document.write(`<img src="${imageLink}" />`);
-
     await imageLink.click();
+
+    // Clear the image preview, canvas, and form text
     await ctx.clearRect(0, 0, canvas.width, canvas.height);
     await setFiles([]);
     await setIsForm([]);
-    // console.log(imageLink);
   };
 
   return (
