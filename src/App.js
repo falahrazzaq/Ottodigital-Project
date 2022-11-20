@@ -74,7 +74,6 @@ function App() {
   let textToWriteMessage = `${isForm?.messageTo}`;
   let textToWriteFrom = `${isForm?.fromName}`;
 
-
   let textStyleOptions = {
     fontSize: 25,
     fontFamily: "Mouse Memoirs",
@@ -87,32 +86,31 @@ function App() {
 
   // Setting up a function with the code to run after the image is loaded
   img.onload = () => {
-     // Once the image is loaded, we will get the width & height of the image
-     let loadedImageWidth = img.width;
-     let loadedImageHeight = img.height;
-     // Set the canvas to the same size as the image.
-     canvas.width = loadedImageWidth;
-     canvas.height = loadedImageHeight;
-     // Draw the image on to the canvas.
-     ctx.drawImage(img, 0, 0);
-     // Set all the properties of the text based on the input params
-     ctx.font = `${textStyleOptions.fontSize}px ${textStyleOptions.fontFamily}`;
-     ctx.fillStyle = textStyleOptions.textColor;
-     ctx.textAlign = textStyleOptions.textAlign;
- 
-     // Setting this so that the postion of the text can be set
-     // based on the x and y cord from the top right corner
-     ctx.textBaseline = "top";
- 
-     // Loop over each of the lines and write it over the canvas
-     // for (let i = 0; i < arrayOfLinesDear.length; i++) {
-     img.src = imageUrl;
+    // Once the image is loaded, we will get the width & height of the image
+    let loadedImageWidth = img.width;
+    let loadedImageHeight = img.height;
+    // Set the canvas to the same size as the image.
+    canvas.width = loadedImageWidth;
+    canvas.height = loadedImageHeight;
+    // Draw the image on to the canvas.
+    ctx.drawImage(img, 0, 0);
+    // Set all the properties of the text based on the input params
+    ctx.font = `${textStyleOptions.fontSize}px ${textStyleOptions.fontFamily}`;
+    ctx.fillStyle = textStyleOptions.textColor;
+    ctx.textAlign = textStyleOptions.textAlign;
+
+    // Setting this so that the postion of the text can be set
+    // based on the x and y cord from the top right corner
+    ctx.textBaseline = "top";
+
+    // Loop over each of the lines and write it over the canvas
+    // for (let i = 0; i < arrayOfLinesDear.length; i++) {
+    img.src = imageUrl;
   };
 
   img.src = imageUrl;
   //Download button function
   const download_image = async () => {
-
     ctx.fillText(textToWriteDear, 300, 200);
     ctx.fillText(textToWriteMessage, 200, 250);
     ctx.fillText(textToWriteFrom, 280, 360);
@@ -172,11 +170,6 @@ function App() {
               </div>
             </div>
             <div className="grid mb-3 justify-items-start">
-              {/* It's not perfect yet but i did my best. thank you! */}
-              <p className="text-red-600">
-                {" "}
-                Please fill the form first before upload the image.
-              </p>
               <div className="flex">
                 <label className="text-sm font-bold" htmlFor="dearName">
                   Dear
