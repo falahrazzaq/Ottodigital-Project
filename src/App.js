@@ -65,6 +65,25 @@ function App() {
     textAlign: "left",
   };
 
+  // To Break Lines
+  function getLines(ctx, text, maxWidth) {
+    var words = text.split(" ");
+    var lines = [];
+    var currentLine = words[0];
+    for (var i = 1; i < words.length; i++) {
+      var word = words[i];
+      var width = ctx.measureText(currentLine + " " + word).width;
+      if (width < maxWidth) {
+        currentLine += " " + word;
+      } else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
+    }
+    lines.push(currentLine);
+    return lines;
+  }
+
   // Load image on the canvas
   let img = new Image();
 
@@ -95,9 +114,19 @@ function App() {
   // Download button function
   const download_image = async () => {
     // Write text into the canvas
-    ctx.fillText(textToWriteDear, 300, 200);
-    ctx.fillText(textToWriteMessage, 200, 250);
-    ctx.fillText(textToWriteFrom, 280, 360);
+    ctx.fillText(textToWriteDear, 300, 200 , 320);
+
+    let arrayOfLines = getLines(ctx, textToWriteMessage, 350);
+    
+    // Set line height as a little bit bigger than the font size
+    let lineheight = textStyleOptions.fontSize + 10;
+    
+    // Loop over each of the lines and write it over the canvas and break the lines
+    for (let i = 0; i < arrayOfLines.length; i++) {
+      ctx.fillText(arrayOfLines[i], 200, 250 + ( i * lineheight ) );
+    }
+
+    ctx.fillText(textToWriteFrom, 280, 360, 320);
 
     const imageLink = document.createElement("a");
     const canvasDownload = document.getElementById("myCanvas");
