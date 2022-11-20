@@ -62,117 +62,75 @@ function App() {
     return lines;
   }
 
-  let loadImageOnCanvasAndThenWriteText = (
-    canvas,
-    imageUrl,
-    textToWriteDear,
-    textToWriteMessage,
-    textToWriteFrom,
-    textStyleOptions,
-    textBoundingBoxWidth
-  ) => {
-    // Get the 2D Context from the canvas
-    let ctx = canvas.getContext("2d");
-    // Create a new Image
-    let img = new Image();
-    // Setting up a function with the code to run after the image is loaded
-    img.onload = () => {
-      // Once the image is loaded, we will get the width & height of the image
-      let loadedImageWidth = img.width;
-      let loadedImageHeight = img.height;
-      // Set the canvas to the same size as the image.
-      canvas.width = loadedImageWidth;
-      canvas.height = loadedImageHeight;
-      // Draw the image on to the canvas.
-      ctx.drawImage(img, 0, 0);
-      // Set all the properties of the text based on the input params
-      ctx.font = `${textStyleOptions.fontSize}px ${textStyleOptions.fontFamily}`;
-      ctx.fillStyle = textStyleOptions.textColor;
-      ctx.textAlign = textStyleOptions.textAlign;
-
-      // Setting this so that the postion of the text can be set
-      // based on the x and y cord from the top right corner
-      ctx.textBaseline = "top";
-
-      // Get lines array
-      let arrayOfLinesDear = getLines(ctx, textToWriteDear, textBoundingBoxWidth);
-      let arrayOfLinesMessage = getLines(ctx, textToWriteMessage, textBoundingBoxWidth);
-      let arrayOfLinesFrom = getLines(ctx, textToWriteFrom, textBoundingBoxWidth);
-      
-      // Set line height as a little bit bigger than the font size
-      let lineheight = textStyleOptions.fontSize + 10;
-      
-      // Loop over each of the lines and write it over the canvas
-
-      // for (let i = 0; i < arrayOfLines.length; i++) {
-      //   ctx.fillText(arrayOfLines[i], xCordOfText, yCordOfText + ( i * lineheight ) );
-      // }
-      
-      for (let i = 0; i < arrayOfLinesDear.length; i++) {
-        ctx.fillText(arrayOfLinesDear[i], 300, 200 + ( i * lineheight ) );
-      }
-      for (let i = 0; i < arrayOfLinesMessage.length; i++) {
-        ctx.fillText(arrayOfLinesMessage[i], 200, 250 + ( i * lineheight ) );
-      }
-      for (let i = 0; i < arrayOfLinesFrom.length; i++) {
-        ctx.fillText(arrayOfLinesFrom[i], 300, 360 + ( i * lineheight ) );
-      }
-    };
-    // Now that we have set up the image "onload" handeler, we can assign
-    // an image URL to the image.
-    img.src = imageUrl;
-  };
-
-// the font is completed loading..
-document.fonts.load('100px "Mouse Memoirs"').then(() => {
-  
   // Setting up the canvas
-  let theCanvas = document.getElementById("myCanvas");
+  let canvas = document.getElementById("myCanvas");
+  // Get the 2D Context from the canvas
+  let ctx = canvas?.getContext("2d");
   // Some image URL..
   let imageUrl = `${files[0]?.preview}`;
-
-  let textStyleOptions = {
-    fontSize: 25,
-    fontFamily: "Mouse Memoirs",
-    textColor: "black",
-    textAlign: "left"
-  };
 
   // Add Text to the canvas
   let textToWriteDear = `${isForm?.dearName}`;
   let textToWriteMessage = `${isForm?.messageTo}`;
   let textToWriteFrom = `${isForm?.fromName}`;
 
-  let textBoundingBoxWidth = 350;
+
+  let textStyleOptions = {
+    fontSize: 25,
+    fontFamily: "Mouse Memoirs",
+    textColor: "black",
+    textAlign: "left",
+  };
   // Load image on the canvas & then write text
-  loadImageOnCanvasAndThenWriteText(
-    theCanvas,
-    imageUrl,
-    textToWriteDear,
-    textToWriteMessage,
-    textToWriteFrom,
-    textStyleOptions,
-    textBoundingBoxWidth
-  );
-});
 
-// console.log(isForm, "isForm");
+  let img = new Image();
 
-//Download button function
+  // Setting up a function with the code to run after the image is loaded
+  img.onload = () => {
+     // Once the image is loaded, we will get the width & height of the image
+     let loadedImageWidth = img.width;
+     let loadedImageHeight = img.height;
+     // Set the canvas to the same size as the image.
+     canvas.width = loadedImageWidth;
+     canvas.height = loadedImageHeight;
+     // Draw the image on to the canvas.
+     ctx.drawImage(img, 0, 0);
+     // Set all the properties of the text based on the input params
+     ctx.font = `${textStyleOptions.fontSize}px ${textStyleOptions.fontFamily}`;
+     ctx.fillStyle = textStyleOptions.textColor;
+     ctx.textAlign = textStyleOptions.textAlign;
+ 
+     // Setting this so that the postion of the text can be set
+     // based on the x and y cord from the top right corner
+     ctx.textBaseline = "top";
+ 
+     // Loop over each of the lines and write it over the canvas
+     // for (let i = 0; i < arrayOfLinesDear.length; i++) {
+     img.src = imageUrl;
+  };
 
-const download_image = () => {
-  const imageLink = document.createElement('a');
-  const canvas = document.getElementById('myCanvas');
-  imageLink.download = 'card.png';
-  imageLink.href = canvas.toDataURL('image/png', 1);
+  img.src = imageUrl;
+  //Download button function
+  const download_image = async () => {
 
-  // window.open(imageLink);
-  // document.write(`<img src="${imageLink}" />`);
+    ctx.fillText(textToWriteDear, 300, 200);
+    ctx.fillText(textToWriteMessage, 200, 250);
+    ctx.fillText(textToWriteFrom, 280, 360);
 
-  imageLink.click();
+    const imageLink = document.createElement("a");
+    const canvasDownload = document.getElementById("myCanvas");
+    imageLink.download = "card.png";
+    imageLink.href = canvasDownload.toDataURL("image/png", 1);
 
-  // console.log(imageLink);
-}
+    // window.open(imageLink);
+    // document.write(`<img src="${imageLink}" />`);
+
+    await imageLink.click();
+    await ctx.clearRect(0, 0, canvas.width, canvas.height);
+    await setFiles([]);
+    await setIsForm([]);
+    // console.log(imageLink);
+  };
 
   return (
     <div className="App">
@@ -202,21 +160,23 @@ const download_image = () => {
                       Drag and drop files here
                     </span>
                   </span>
-                <div>
-                  <input
-                    type="file"
-                    className="hidden"
-                    name="files"
-                    {...getInputProps()}
-                  />
+                  <div>
+                    <input
+                      type="file"
+                      className="hidden"
+                      name="files"
+                      {...getInputProps()}
+                    />
                   </div>
                 </label>
               </div>
             </div>
             <div className="grid mb-3 justify-items-start">
-
               {/* It's not perfect yet but i did my best. thank you! */}
-            <p className="text-red-600"> Please fill the form first before upload the image.</p>
+              <p className="text-red-600">
+                {" "}
+                Please fill the form first before upload the image.
+              </p>
               <div className="flex">
                 <label className="text-sm font-bold" htmlFor="dearName">
                   Dear
@@ -227,6 +187,7 @@ const download_image = () => {
                 id="dearName"
                 name="dearName"
                 className="w-30 border border-gray-300 focus:outline-none rounded"
+                value={isForm?.dearName || ""}
                 onChange={(e) => onChangeInput("dearName", e?.target?.value)}
               />
             </div>
@@ -241,6 +202,7 @@ const download_image = () => {
                 id="messageTo"
                 name="messageTo"
                 className="w-30 border border-gray-300 focus:outline-none rounded"
+                value={isForm?.messageTo || ""}
                 onChange={(e) => onChangeInput("messageTo", e?.target?.value)}
               />
             </div>
@@ -255,17 +217,27 @@ const download_image = () => {
                 id="fromName"
                 name="fromName"
                 className="w-30 border border-gray-300 focus:outline-none rounded"
+                value={isForm?.fromName || ""}
                 onChange={(e) => onChangeInput("fromName", e?.target?.value)}
               />
             </div>
           </div>
           <div>
-            <button className="border-2 rounded my-5 w-28" onClick={(e) => download_image()}>Download</button>
+            <button
+              className="border-2 rounded my-5 w-28"
+              onClick={(e) => download_image()}
+            >
+              Download
+            </button>
           </div>
 
-          
           <div>
-            <canvas id="myCanvas" width="200" height="200" className="hidden"></canvas>
+            <canvas
+              id="myCanvas"
+              width="200"
+              height="200"
+              className="hidden"
+            ></canvas>
           </div>
         </main>
       </div>
